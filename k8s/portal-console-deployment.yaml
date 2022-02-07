@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: portal-console
+spec:
+  ports:
+    - port: 8080
+  selector:
+    tier: portal-console
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-console
+  labels:
+    app: en7-frontend
+spec:
+  selector:
+    matchLabels:
+      tier: portal-console
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: portal-console
+    spec:
+      containers:
+      - image: eugeniosant/portal-console:7.0.0.2-SNAPSHOT
+        name: portal-console
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KEYCLOAK_ENABLED
+          value: 'false'
+        - name: KEYCLOAK_REALM
+          value: entando
+        - name: KEYCLOAK_PUBLIC_CLIENT_ID
+          value: entando-admin-console-web
+        - name: KEYCLOAK_AUTH_URL
+          value: 'https://dev-kc-nextn.okd-entando.org/auth'
+        - name: KEYCLOAK_CLIENT_ID
+          value: entando-admin-console
+        - name: KEYCLOAK_CLIENT_SECRET
+          value: a4b39bb9-a260-4059-9992-5e1bed63bf62
+        - name: ENTANDO_RB_CONFIG_ON_FILE
+          value: 'false'
+        - name: REDIS_ACTIVE
+          value: 'true'
+        - name: REDIS_ADDRESS
+          value: 'redis://redis:6379'
+        - name: SLAVE_INSTANCE_ID
+          value: portal-console
+        - name: ENTANDO_RB_CONSUMER_ENTANDO7_CORE_LIB_ACTIVE
+          value: 'true'
+        - name: ENTANDO_RB_CONSUMER_ENTANDO7_PORTAL_LIB_ACTIVE
+          value: 'true'
+        - name: ENTANDO_RB_CONSUMER_ENTANDO7_PLUGIN_CMS_LIB_ACTIVE
+          value: 'true'
+        - name: ENTANDO_RB_CONSUMER_ENTANDO7_CORE_LIB_DEFAULT_GRPC_HOST_PORT
+          value: 'quickstart-server-grpc-service:8088'
+        - name: ENTANDO_RB_CONSUMER_ENTANDO7_PORTAL_LIB_DEFAULT_GRPC_HOST_PORT
+          value: 'quickstart-server-grpc-service:8088'
+        - name: ENTANDO_RB_CONSUMER_ENTANDO7_PLUGIN_CMS_LIB_DEFAULT_GRPC_HOST_PORT
+          value: 'quickstart-server-grpc-service:8088'
+        ports:
+        - containerPort: 8080
+          name: portal-console
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: quickstart-portal-console-ingress
+spec:
+  rules:
+    - host: portal-console-entando.10-133-66-22.nip.io
+      http:
+        paths:
+          - path: /portal-console
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: portal-console
+                port:
+                  number: 8080
+
+
+
+

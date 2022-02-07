@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context path="/portal-console" docBase="./portal-console" debug="1" reloadable="false">
+
+    <Environment name="logActiveFileOutput" value="true" type="java.lang.String" override="false" />
+    <Environment name="logName" value="/usr/local/tomcat//logs/portal-console.log" type="java.lang.String" override="false" />
+    <Environment name="logFileRotatePattern" value="/usr/local/tomcat//logs/portal-console_logs/portal-console-%i.log.gz" type="java.lang.String" override="false" />
+    <Environment name="logLevel" value="WARN" type="java.lang.String" override="false" />
+    <Environment name="logFileSize" value="10485760" type="java.lang.String" override="false" />
+    <Environment name="logFilesCount" value="10" type="java.lang.String" override="false" />
+
+    <Environment name="configVersion" value="production" type="java.lang.String" override="false" />
+
+    <Environment name="applicationBaseURL" value="https://www.mydomain.com/portal-console/" type="java.lang.String" override="false" />
+    <Environment name="resourceRootURL" value="/portal-console/resources/" type="java.lang.String" override="false" />
+    <Environment name="protectedResourceRootURL" value="/portal-console/protected/" type="java.lang.String" override="false" />
+
+    <Environment name="resourceDiskRootFolder" value="/usr/local/tomcat//webapps/portal-console/resources" type="java.lang.String" override="false" />
+    <Environment name="protectedResourceDiskRootFolder" value="/usr/local/tomcat//protected" type="java.lang.String" override="false" />
+
+    <Environment name="indexDiskRootFolder" value="/usr/local/tomcat//webapps/portal-console/indexdir" type="java.lang.String" override="false" />
+    
+    <Environment name="portDataSourceClassName" value="org.apache.derby.jdbc.EmbeddedDriver" type="java.lang.String" override="false" />
+    <Environment name="servDataSourceClassName" value="org.apache.derby.jdbc.EmbeddedDriver" type="java.lang.String" override="false" />
+	<!--
+    <Resource name="jdbc/portDataSource" auth="Container"
+              type="javax.sql.DataSource" driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+              maxActive="8" maxIdle="4"
+              username="agile" password="agile"
+              url="jdbc:derby:/usr/local/tomcat//webapps/portal-console/derby/production/portal-consolePort;create=true" />
+
+    <Resource name="jdbc/servDataSource" auth="Container"
+              type="javax.sql.DataSource" driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+              maxActive="8" maxIdle="4"
+              username="agile" password="agile"
+              url="jdbc:derby:/usr/local/tomcat//webapps/portal-console/derby/production/portal-consoleServ;create=true" />
+    -->
+</Context>
