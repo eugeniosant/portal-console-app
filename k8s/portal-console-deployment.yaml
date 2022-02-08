@@ -27,7 +27,7 @@ spec:
         tier: portal-console
     spec:
       containers:
-      - image: eugeniosant/portal-console:7.0.0.2-SNAPSHOT
+      - image: eugeniosant/portal-console:7.0.0.4-SNAPSHOT
         name: portal-console
         imagePullPolicy: IfNotPresent
         env:

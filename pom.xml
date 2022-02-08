@@ -874,7 +874,7 @@
             <version>${eN7.version}</version>
             <type>jar</type>
         </dependency>
-        <!--
+        
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-redis-engine</artifactId>
@@ -899,7 +899,7 @@
             <version>${eN7.version}</version>
             <type>jar</type>
         </dependency>
-        -->
+        
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-keyclock-engine</artifactId>
