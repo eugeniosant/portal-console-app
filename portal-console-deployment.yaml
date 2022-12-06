@@ -29,18 +29,6 @@ spec:
         name: portal-console
         imagePullPolicy: IfNotPresent
         env:
-        - name: KEYCLOAK_ENABLED
-          value: 'false'
-        - name: KEYCLOAK_REALM
-          value: entando
-        - name: KEYCLOAK_PUBLIC_CLIENT_ID
-          value: entando-admin-console-web
-        - name: KEYCLOAK_AUTH_URL
-          value: 'https://dev-kc-nextn.okd-entando.org/auth'
-        - name: KEYCLOAK_CLIENT_ID
-          value: entando-admin-console
-        - name: KEYCLOAK_CLIENT_SECRET
-          value: a4b39bb9-a260-4059-9992-5e1bed63bf62
         - name: ENTANDO_RB_CONFIG_ON_FILE
           value: 'false'
         - name: ENTANDO_RB_CONSUMER_ENTANDO7_CORE_LIB_ACTIVE
@@ -67,19 +55,21 @@ spec:
         - containerPort: 8080
           name: portal-console
 ---
-kind: Ingress
 apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: quickstart-portal-console-ingress
+  labels:
+    EntandoApp: quickstart
+  name: portal-console-ingress
 spec:
   rules:
   - host: 10-219-168-145.nip.io
     http:
       paths:
       - backend:
-              service:
-                name: portal-console
-                port:
-                  number: 8080
+          service:
+            name: portal-console
+            port:
+              number: 8080
         path: /portal-console
         pathType: Prefix

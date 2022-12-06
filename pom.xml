@@ -5,9 +5,9 @@
     <groupId>org.entando.entando</groupId>
     <artifactId>portal-console</artifactId>
     <packaging>war</packaging>
-    <version>7.0.0.0-SNAPSHOT</version>
-    <name>eN7 Portal Console APP</name>
-    <description>A Portal Console for eN7</description>
+    <version>7.1.1.0</version>
+    <name>Portal Console eN7</name>
+    <description>Portal Console for eN7</description>
     <url>http://www.entando.com/</url>
     <licenses>
         <license>
@@ -155,9 +155,12 @@
 
         <skipDerby>true</skipDerby>
         <skipStandalone>true</skipStandalone>
-        <eN7.version>7.0.0.0-SNAPSHOT</eN7.version>
-        <spring.version>5.3.9</spring.version>
-        <struts2.version>2.5.26</struts2.version>
+        <entando.version>${project.version}</entando.version>
+        <entando7.version>7.1.1.0</entando7.version>
+        <spring.version>5.3.20</spring.version>
+        <springsecurity.version>5.5.7</springsecurity.version>
+        <springsecurityoauth2.version>2.5.2.RELEASE</springsecurityoauth2.version>
+        <struts2.version>2.5.30</struts2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -218,69 +221,6 @@
                     <source>1.8</source>
                 </configuration>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.plexus</groupId>
-                        <artifactId>plexus-archiver</artifactId>
-                        <version>2.4.1</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>unpack-dependencies-jsp-frontend-core-webapp</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${core-webapp-cant-overwrite}</skip>
-                            <verbose>true</verbose>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>false</overWriteIfNewer>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.entando</groupId>
-                                    <artifactId>entando7-portal-console</artifactId>
-                                    <type>war</type>
-                                    <outputDirectory>src/main/webapp</outputDirectory>
-                                    <overWrite>false</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>WEB-INF/aps/jsp/internalservlet/api/**/*.jsp</includes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack-dependencies-bootstrap</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <verbose>true</verbose>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>false</overWriteIfNewer>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.entando.entando7.bundles.misc</groupId>
-                                    <artifactId>entando7-misc-bootstrap</artifactId>
-                                    <type>war</type>
-                                    <outputDirectory>${project.build.directory}/entando-misc-bootstrap</outputDirectory>
-                                    <overWrite>false</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>resources/static/entando-misc-bootstrap/bootstrap/bootstrap/**</includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -531,42 +471,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>decide-if-core-webapp-can-overwrite</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <exportAntProperties>true</exportAntProperties>
-                            <target>
-                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"
-                                         classpathref="maven.plugin.classpath" />
-                                <if>
-                                    <available file="src/main/webapp/WEB-INF/aps/jsp/internalservlet/api" type="dir" />
-                                    <then>
-                                        <property name="core-webapp-cant-overwrite" value="true"/>
-                                    </then>
-                                </if>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>ant-contrib</groupId>
-                        <artifactId>ant-contrib</artifactId>
-                        <version>20020829</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            -->
             <plugin>
                 <groupId>org.zeroturnaround</groupId>
                 <artifactId>jrebel-maven-plugin</artifactId>
@@ -618,9 +522,9 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>postgresql</groupId>
+                        <groupId>org.postgresql</groupId>
                         <artifactId>postgresql</artifactId>
-                        <version>9.1-901.jdbc4</version>
+                        <version>42.5.0</version>
                     </dependency>
                     <!-- uncomment if you need -->
                     <!--
@@ -751,51 +655,34 @@
         <dependency>
             <groupId>org.entando</groupId>
             <artifactId>entando7-core-lib</artifactId>
-            <version>${eN7.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.entando</groupId>
-            <artifactId>entando7-core-engine-lib</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.entando</groupId>
             <artifactId>entando7-portal-lib</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.entando</groupId>
             <artifactId>entando7-portal-console</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.entando</groupId>
             <artifactId>entando7-portal-console</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.entando</groupId>
             <artifactId>entando7-portal-console</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>ch.qos.logback.contrib</groupId>
-            <artifactId>logback-json-classic</artifactId>
-            <version>0.1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback.contrib</groupId>
-            <artifactId>logback-jackson</artifactId>
-            <version>0.1.5</version>
         </dependency>
         
         <dependency>
@@ -807,7 +694,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         
@@ -820,7 +707,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.8</version>
+            <version>42.5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -855,56 +742,69 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-        
+        <!--
+        <dependency>
+            <groupId>org.entando.entando7.plugins</groupId>
+            <artifactId>entando7-plugins-portal-console-card</artifactId>
+            <version>${entando7.version}</version>
+            <type>war</type>
+        </dependency>
+        -->
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-cms-portal-console</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-cms-portal-console</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-cms-lib</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
         
-        <dependency>
+	<dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-redis-engine</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
+	<dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-redisclient-core</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
+	<dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-redisclient-portal</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
+	<dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-redisclient-cms</artifactId>
-            <version>${eN7.version}</version>
+            <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
         
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
-            <artifactId>entando7-plugins-keyclock-engine</artifactId>
-            <version>${eN7.version}</version>
+            <artifactId>entando7-plugins-engine-keyclock</artifactId>
+            <version>${entando7.version}</version>
             <type>jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         
     </dependencies>
