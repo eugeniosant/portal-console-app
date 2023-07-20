@@ -1,0 +1,165 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: primary-kc-secret
+type: Opaque
+stringData:
+  KC_PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmJBV8HKsevHzBMCvxiJH9OCGh1GaQX5TPnXj+WMl13edm1XZG0uXApEhtQsLEvNA5hbUOd8CB9zOcPJ1opjWItkvsaqXxo6odabYkaNYDNN9FkjOSymJ5uhwOekYYT3UTr14nDOyf3mQGzvxzvMttK/qr5w2vmna8m1XGmKgs73gysm43mVsyRQRU4v3+nAQDMJHDemkoT2xaNBdT8xlPHSVXcYMc+rSAZlC2bj/+0Q8ajaVqaE6xHzWGJZfZ1ubVhPpiWL9H/PGeUbqrcc02XAtF8A+J0GS/Ec3ty3iJdyDWw0+JkIsalugwNf18/1qGJS9WejE53qm/lXmSuZUuQIDAQAB\n-----END PUBLIC KEY-----\n"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    deployment: primary-cds-deployment
+  name: primary-cds-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    limits:
+      storage: 5Gi
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: primary-cds-service
+  labels:
+    app: primary-cds-service
+spec:
+  ports:
+    - port: 8080
+      name: internal-port
+      protocol: TCP
+      targetPort: 8080
+    - port: 8081
+      name: public-port
+      protocol: TCP
+      targetPort: 8081
+  selector:
+    app: primary-cds-deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: primary-cds-deployment
+  labels:
+    app: primary-cds-deployment
+spec:
+  selector:
+    matchLabels:
+      app: primary-cds-deployment
+  template:
+    metadata:
+      labels:
+        app: primary-cds-deployment
+    spec:
+      initContainers:
+        - name: init-cds-data
+          env:
+          - name: FORCE_CDS
+            value: "false"
+          - name: REPO_PATH
+            value: https://raw.github.com/entando-ps/cds/entando721/entando-data/
+          - name: ARCHIVE_NAME
+            value: entando721.tar.gz
+          image: registry.hub.docker.com/entando/busybox-cds:1.36.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /entando-data
+              name: cds-data-volume
+      containers:
+        - readinessProbe:
+            httpGet:
+              port: 8081
+              path: /health/health_check
+              scheme: HTTP
+            failureThreshold: 1
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          env:
+            - name: RUST_LOG
+              value: actix_web=info,actix_server=info,actix_web_middleware_keycloak_auth=trace
+            - name: KEYCLOAK_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: KC_PUBLIC_KEY
+                  name: primary-kc-secret
+            - name: CORS_ALLOWED_ORIGIN # # use for external CDS service
+              value: All # enter your Entando app domain name
+            - name: CORS_ALLOWED_ORIGIN_END_WITH # use for wildcard domain name
+              value: k8s-entando.org # enter wildcard domain name for your Entando app, e.g. "nip.io"
+          name: cds
+          image: docker.io/entando/cds:1.0.4
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              port: 8081
+              path: /health/health_check
+            timeoutSeconds: 5
+            successThreshold: 1
+            periodSeconds: 30
+            initialDelaySeconds: 5
+            failureThreshold: 1
+          ports:
+            - containerPort: 8080
+              name: internal-port
+            - containerPort: 8081
+              name: public-port
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 500m
+              memory: 500Mi
+          volumeMounts:
+            - mountPath: /entando-data
+              name: cds-data-volume
+      volumes:
+        - name: cds-data-volume
+          persistentVolumeClaim:
+            claimName: primary-cds-pvc
+            readOnly: false
+  replicas: 1
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: primary-cds-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Scheme \$scheme;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+      add_header Content-Security-Policy upgrade-insecure-requests;
+    nginx.ingress.kubernetes.io/proxy-body-size: "150m" # edit according to the file size you require
+    nginx.org/client-max-body-size: "150m" # edit according to the file size you require
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: test-en7-cds.k8s-entando.org
+      http:
+        paths:
+          - backend:
+              service:
+                name: primary-cds-service
+                port:
+                  number: 8081
+            pathType: Prefix
+            path: /primary
+          - backend:
+              service:
+                name: primary-cds-service
+                port:
+                  number: 8080
+            pathType: Prefix
+            path: /api/v1/
+  tls: # Optional - enable TLS here
+    - hosts:
+        - test-en7-cds.k8s-entando.org
+      secretName: cds-tls

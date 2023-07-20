@@ -25,22 +25,22 @@ spec:
         tier: portal-console
     spec:
       containers:
-      - image: eugeniosant/portal-console:7.1.1.0
+      - image: eugeniosant/portal-console:7.2.2.0-rc1
         name: portal-console
         imagePullPolicy: IfNotPresent
         env:
         - name: KEYCLOAK_ENABLED
-          value: 'false'
+          value: 'true'
         - name: KEYCLOAK_REALM
           value: entando
         - name: KEYCLOAK_PUBLIC_CLIENT_ID
-          value: entando-admin-console-web
+          value: entando-web-admin-console
         - name: KEYCLOAK_AUTH_URL
-          value: 'https://dev-kc-nextn.okd-entando.org/auth'
+          value: 'https://test-en7.k8s-entando.org/auth'
         - name: KEYCLOAK_CLIENT_ID
-          value: entando-admin-console
+          value: test-en7-portal-console
         - name: KEYCLOAK_CLIENT_SECRET
-          value: a4b39bb9-a260-4059-9992-5e1bed63bf62
+          value: trWeaWPbtpUQvb1ssOzSYnCdDRmX8aQ0
         - name: ENTANDO_RB_CONFIG_ON_FILE
           value: 'false'
         - name: ENTANDO_RB_CONSUMER_ENTANDO7_CORE_LIB_ACTIVE
@@ -50,12 +50,14 @@ spec:
         - name: ENTANDO_RB_CONSUMER_ENTANDO7_PLUGIN_CMS_LIB_ACTIVE
           value: 'true'
         - name: ENTANDO_RB_CONSUMER_ENTANDO7_CORE_LIB_DEFAULT_GRPC_HOST_PORT
-          value: quickstart-server-grpc-service:8088
+          value:  test-en7-grpc-service:8088
         - name: ENTANDO_RB_CONSUMER_ENTANDO7_PORTAL_LIB_DEFAULT_GRPC_HOST_PORT
-          value: quickstart-server-grpc-service:8088
+          value:  test-en7-grpc-service:8088
         - name: ENTANDO_RB_CONSUMER_ENTANDO7_PLUGIN_CMS_LIB_DEFAULT_GRPC_HOST_PORT
-          value: quickstart-server-grpc-service:8088
+          value:  test-en7-grpc-service:8088
         - name: REDIS_ACTIVE
+          value: "true"
+        - name: REDIS_SESSION_ACTIVE
           value: "true"
         - name: REDIS_ADDRESS
           value: redis://redis:6379

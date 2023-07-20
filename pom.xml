@@ -5,7 +5,7 @@
     <groupId>org.entando.entando</groupId>
     <artifactId>portal-console</artifactId>
     <packaging>war</packaging>
-    <version>7.1.1.0</version>
+    <version>7.2.2.0-rc1</version>
     <name>Portal Console eN7</name>
     <description>Portal Console for eN7</description>
     <url>http://www.entando.com/</url>
@@ -156,11 +156,13 @@
         <skipDerby>true</skipDerby>
         <skipStandalone>true</skipStandalone>
         <entando.version>${project.version}</entando.version>
-        <entando7.version>7.1.1.0</entando7.version>
+        <entando7.version>7.2.2.0-rc1</entando7.version>
+        <!--
         <spring.version>5.3.20</spring.version>
         <springsecurity.version>5.5.7</springsecurity.version>
         <springsecurityoauth2.version>2.5.2.RELEASE</springsecurityoauth2.version>
         <struts2.version>2.5.30</struts2.version>
+        -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -697,13 +699,14 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
-        
+        <!--
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
+        -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -742,6 +745,14 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.entando.entando7.plugins</groupId>
+            <artifactId>entando7-plugins-cds-engine</artifactId>
+            <version>${entando7.version}</version>
+            <type>jar</type>
+        </dependency>
+        
         <!--
         <dependency>
             <groupId>org.entando.entando7.plugins</groupId>
@@ -775,6 +786,7 @@
             <version>${entando7.version}</version>
             <type>jar</type>
         </dependency>
+        
 	<dependency>
             <groupId>org.entando.entando7.plugins</groupId>
             <artifactId>entando7-plugins-redisclient-core</artifactId>
@@ -802,10 +814,18 @@
         </dependency>
         
         <dependency>
+            <groupId>org.entando.entando7.plugins</groupId>
+            <artifactId>entando7-plugins-cds-engine</artifactId>
+            <version>${entando7.version}</version>
+            <type>jar</type>
+        </dependency>
+        
+        <!--
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+        -->
     </dependencies>
 </project>
